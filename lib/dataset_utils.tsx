@@ -31,7 +31,7 @@ interface Row {
 }
 
 interface UsefulRow{
-  track_name: string,
+  trackName: string,
   mainArtist: string,
   year: number,
 }
@@ -58,7 +58,7 @@ export function parseCsv(){
     }
 
     const usefulData: UsefulRow[]  = [];
-    data.forEach((r: Row) => usefulData.push({track_name: r.track_name, mainArtist: r['artist(s)_name'].split(',')[0].trim(), year: r.released_year}));
+    data.forEach((r: Row) => usefulData.push({trackName: r.track_name, mainArtist: r['artist(s)_name'].split(',')[0].trim(), year: r.released_year}));
 
     return usefulData;
 }
