@@ -1,7 +1,13 @@
 
 const DEEZER_BASE_URL = 'https://api.deezer.com'
 
-export async function getPreviewLink(artistName: string, songName: string){
+interface songDetails{
+
+    title: string,
+    artist: string,
+    previewLink: string
+}
+export async function getPreviewLink(artistName: string, songName: string): Promise<songDetails>{
 
     const query = `artist:"${artistName}" track:"${songName}"`;
     const res = await fetch(`${DEEZER_BASE_URL}/search?q=${encodeURIComponent(query)}`);
