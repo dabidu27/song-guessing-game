@@ -1,5 +1,6 @@
 import fs from 'fs';
 import Papa from 'papaparse';
+import path from 'path';
 
 interface Row {
  track_name: string,
@@ -37,7 +38,9 @@ interface UsefulRow{
 //Function to read the data from the csv
 export function parseCsv(){
 
-    const fileContent = fs.readFileSync('/Users/dabid/Desktop/andrada_game/game/Spotify Most Streamed Songs.csv', 'utf-8');
+    const filePath = path.join(process.cwd(), 'assets', 'Spotify Most Streamed Songs.csv');
+
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
     const {data, errors} = Papa.parse<Row>(fileContent, {
             header: true, //use header rows as keys
             skipEmptyLines: true,
