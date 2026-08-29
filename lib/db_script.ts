@@ -1,6 +1,6 @@
 import {Pool} from 'pg';
 import { parseCsv } from './dataset_utils';
-import { getPreviewLink } from './deezer_utils';
+import { getTrackId } from './deezer_utils';
 
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
@@ -17,10 +17,10 @@ async function fillDb(){
         try{
             
             //No preview link => throws error => song is skipped
-            const deezerData = await getPreviewLink(song.mainArtist, song.trackName);
+            const deezerData = await getTrackId(song.mainArtist, song.trackName);
 
-            const result = await pool.query('insert into songs(title, artist, year, preview_link) values($1, $2, $3, $4)', 
-                [song.trackName, song.mainArtist, song.year, deezerData.previewLink]
+            const result = await pool.query('insert into songs(title, artist, year, track_id) values($1, $2, $3, $4)', 
+                [song.trackName, song.mainArtist, song.year, deezerData.trackId]
             );
 
             if(result.rowCount === 0){
