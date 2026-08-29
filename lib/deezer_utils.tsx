@@ -1,4 +1,3 @@
-
 const DEEZER_BASE_URL = 'https://api.deezer.com'
 
 interface songDetails{
@@ -19,11 +18,11 @@ export async function getPreviewLink(artistName: string, songName: string): Prom
     }
 
     const data = await res.json();
-    if(!data){
-        throw new Error('No data returned by Deezer');
+    const songData = data.data[0];
+    if(!songData){
+        throw new Error('Song not found');
     }
 
-    const songData = data.data[0];
     return {title: songData.title, artist: songData.artist.name, previewLink: songData.preview};
     
 }
