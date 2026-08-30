@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {pool} from '@/lib/create_pool'; //import pool to only create it once, not for every request
 import { getPreviewLink } from "@/lib/deezer_utils";
+import { checkSong, setSongInactive } from "@/lib/redis_utils";
 
 interface DBRow{
     id: number,
@@ -12,17 +13,14 @@ interface DBRow{
 
 const MAX_ATTEMPTS = 10;
 
-export async function GET(req: NextRequest){
+export async function GET(req: NextRequest, {params}: {params: Promise<{clientId: string}>}){
 
-    function getRandomInt(min: number, max: number): number {
-        const minCeiled = Math.ceil(min);
-        const maxFloored = Math.floor(max);
-        return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+    const {clientId} = await params;
+    if(!clientId){
+        return NextResponse.json({error: 'Forbidden'}, {status: 400});
     }
 
     let attempts = 0;
-
-    //get a random number from 556 to 1289 => random song id
 
     let found: boolean = false;
     let data: DBRow| null = null;
@@ -40,13 +38,21 @@ export async function GET(req: NextRequest){
             data = result.rows[0];
             if(!data)
                 throw new Error('Empty data')
+
+            
+            let trackId = data.track_id;
             //check if the trackId is already in a redis instance - if it is, it means that the song is still inactive - cannot be used until ttl to avoid repeating songs
+            let inactive = await checkSong(clientId, trackId);
             //throw error if in redis
+            if(inactive){
+                throw new Error('Song is inactive');
+            }
 
             //get the preview link of the song
-            previewLink = await getPreviewLink(data.track_id);
+            previewLink = await getPreviewLink(trackId);
 
             found = true;
+            await setSongInactive(clientId, trackId);
 
         }catch(err: any){
             console.error('Attempt failed:', err.message);
