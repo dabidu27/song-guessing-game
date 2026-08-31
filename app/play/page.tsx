@@ -48,7 +48,9 @@ export default function PlayPage() {
         setStatus('lost');
 
       shouldResetRef.current = true;
-      
+      setSongPlaying(false);
+      playSnippet();
+
       return next;
     })
   }
@@ -67,6 +69,7 @@ export default function PlayPage() {
     setError('');
     setAttempts(Array(SNIPPET_DURATIONS.length).fill(''));
     setStatus('playing');
+    setSongPlaying(false);
     shouldResetRef.current = true;
     try {
       const clientId = getClientIdOrGenerate();
@@ -164,10 +167,6 @@ export default function PlayPage() {
                 <AlertCircleIcon />
                 <AlertTitle>You lost</AlertTitle>
                 <AlertDescription>Song was {songData.artist}-{songData.title}</AlertDescription>
-                 <button onClick={() => {
-                  setSongData(null);
-                  getRandomSong();
-                }}>Play again</button>
             </Alert>
   
         </div>
@@ -199,7 +198,17 @@ export default function PlayPage() {
       
       <div className="flex flex-1 items-center gap-2">
         <input className="input"></input>
-        <button className = "button" onClick={handleSkip}>Skip</button>
+        <button className = "button" onClick={() => {
+          if(status !== 'lost')
+            handleSkip();
+          else
+              {
+                setSongData(null);
+                getRandomSong();
+              }
+          }}>
+          {status === 'lost' ? 'Play again' : 'Skip'}
+          </button>
       </div>
       
 
