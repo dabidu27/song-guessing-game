@@ -8,7 +8,16 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 
+import { Progress, ProgressLabel } from '@/components/ui/progress';
+
+import GuessRow from '@/components/ui/GuessRow';
+import { Input } from '@base-ui/react';
+
 const SNIPPET_DURATIONS = [1, 2, 4, 7, 11, 16];
+
+const attempts = Array.from({length: SNIPPET_DURATIONS.length}).map((_, i) => {
+  return '';
+})
 
 interface SongData {
   id: number;
@@ -23,7 +32,17 @@ export default function PlayPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [songData, setSongData] = useState<SongData | null>(null);
+  const [attempts, setAttempts] = useState<string[]>(Array(SNIPPET_DURATIONS.length).fill(''));
 
+  function handleSkip(){
+    setAttempts((prev) => {
+      const next = [...prev];
+      const emptyIndex = next.findIndex((a) => a === '');
+      if(emptyIndex !== -1)
+        next[emptyIndex] = 'Skipped';
+      return next;
+    })
+  }
 
   function getClientIdOrGenerate() {
     let clientId = localStorage.getItem('clientId');
@@ -57,24 +76,20 @@ export default function PlayPage() {
     getRandomSong();
   }, []);
 
-
-  if (error !== '') {
-    return (
-      <Alert variant="destructive" className="max-w-md">
-        <AlertCircleIcon />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (!songData) {
-    return <div>Loading song...</div>;
+  if(!songData){
+  return(
+    <div className="flex flex-col flex-1 items-center justify-center bg-background text-foreground font-sans">
+      <Progress className = "w-full max-w-sm" value = {null}>
+        <ProgressLabel>Loading song...</ProgressLabel>
+      </Progress>
+    </div>
+    )
   }
 
   return (
 
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+     
      {error && (
         <div className='fixed top-4 right-4 z-50'>
             <Alert variant="destructive" className="max-w-md">
@@ -86,6 +101,19 @@ export default function PlayPage() {
      )}
 
       <h1 className='title'>Play page</h1>
+
+      <div className="flex flex-col gap-2 mt-4 w-full max-w-md">
+        {Array.from({length: SNIPPET_DURATIONS.length}).map((_, i) => {
+          return(<GuessRow key = {i} label={attempts[i]}>
+          </GuessRow>)
+        })}
+      </div>
+      
+      <div className="flex flex-1 items-center gap-2">
+        <Input className="input"></Input>
+        <button className = "button" onClick={handleSkip}>Skip</button>
+      </div>
+      
 
     </div>
   );
