@@ -241,7 +241,7 @@ export default function PlayPage() {
             <Alert variant="destructive" className="max-w-md">
                 <AlertCircleIcon />
                 <AlertTitle>You lost</AlertTitle>
-                <AlertDescription>Song was {songData.artist}-{songData.title}</AlertDescription>
+                <AlertDescription>Song was {songData.artist} - {songData.title}</AlertDescription>
             </Alert>
   
         </div>
@@ -252,7 +252,7 @@ export default function PlayPage() {
             <Alert variant="default" className="max-w-md">
                 <AlertCircleIcon />
                 <AlertTitle>You won</AlertTitle>
-                <AlertDescription>Song was {songData.artist}-{songData.title}</AlertDescription>
+                <AlertDescription>Song was {songData.artist} - {songData.title}</AlertDescription>
             </Alert>
   
         </div>
