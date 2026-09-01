@@ -4,9 +4,31 @@ export default function GuessRow({
 }: {
         label: string
     }){
+
+    let guessStatus = '';
+    let finalLabel = ''
+    if(label === 'Skipped'){
+        guessStatus = 'Skipped';
+        finalLabel = 'Skipped';
+    }
+    else{
+        finalLabel = label.split('GuessStatus')[0];
+        guessStatus = label.split('GuessStatus')[1];
+    }
+
+    let color = '';
+    if (guessStatus === 'Correct')
+        color = 'green';
+    else if (guessStatus === 'Wrong')
+        color = 'red';
+    else
+        color = 'grey';
+
     return(
-        <div className="guessRow">
-            {label}
+
+
+        <div className="guessRow" style={{backgroundColor:color}}>
+            {finalLabel}
         </div>
     )
 }

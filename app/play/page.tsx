@@ -24,6 +24,12 @@ interface SongData {
   previewLink: string;
 }
 
+interface QueryResult{
+  id: number,
+  title: string,
+  artist: string
+}
+
 export default function PlayPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -31,11 +37,17 @@ export default function PlayPage() {
   const [attempts, setAttempts] = useState<string[]>(Array(SNIPPET_DURATIONS.length).fill(''));
   const [songPlaying, setSongPlaying] = useState<Boolean>(false);
   const [status, setStatus] = useState('playing');
+  const [query, setQuery] = useState('');
+  const [queryResults, setQueryResults] = useState<QueryResult[]>([]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const shouldResetRef = useRef(true);
 
   function handleSkip(){
+
+    setSongPlaying(false);
+    shouldResetRef.current = true;
+    audioRef.current?.pause();
 
     setAttempts((prev) => {
       const next = [...prev];
@@ -47,12 +59,11 @@ export default function PlayPage() {
       if(attemptsUsed === SNIPPET_DURATIONS.length)
         setStatus('lost');
 
-      shouldResetRef.current = true;
-      setSongPlaying(false);
-      playSnippet();
-
       return next;
     })
+
+    setQuery('');
+    setQueryResults([]);
   }
 
   function getClientIdOrGenerate() {
@@ -90,6 +101,13 @@ export default function PlayPage() {
   useEffect(() => {
     getRandomSong();
   }, []);
+
+  //start playing the song anytime a new attempt is made (when attempts changes)
+  useEffect(() => {
+    const attemptsUsed = attempts.filter(a => a !== '').length;
+    if(attemptsUsed > 0 && status === 'playing')
+      playSnippet();
+  }, [attempts])
 
   //each playSnippet call adds a new stopAt listener - the listener is removed only after stopAt fires
   //if the user pauses manually, stopAt does not fire and the listener is never removed
@@ -135,6 +153,60 @@ export default function PlayPage() {
     audio.addEventListener('timeupdate', stopAt);
   }
 
+  const debounceRef = useRef<ReturnType <typeof setTimeout> | null>(null);
+
+  //Every keystroke will call this function
+  //setTimeout(fetch function, 250) delays the api fetch by 250ms
+  //every new keystorke delets the old delay and sets a new one
+  //only when there will be no keystroke for 250ms, a fetch will run
+  const handleQuery = (value: string) => {
+
+    setQuery(value);
+    if(debounceRef.current)
+      clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async() => {
+      const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(value)}`);
+      const data = await res.json();
+      setQueryResults(data.results ?? []);
+    }, 250);
+  }
+
+  const handleSubmission = ((song: QueryResult) => {
+
+    const correctGuess = song.id === songData?.id;
+
+    setSongPlaying(false);
+    shouldResetRef.current = true;
+    audioRef.current?.pause();
+
+    setAttempts((prev) => {
+
+      const next = [...prev];
+      const empty = next.findIndex(a => a === '');
+
+      if(empty !== -1)
+        if(correctGuess)
+          next[empty] = `${song.title} - ${song.artist}GuessStatusCorrect`
+        else
+          next[empty] = `${song.title} - ${song.artist}GuessStatusWrong`
+
+      const attemptsUsed = next.filter(a => a !== '').length;
+
+      if(correctGuess)
+        setStatus('won');
+      else if (attemptsUsed === SNIPPET_DURATIONS.length)
+        setStatus('lost');
+
+      return next;
+    })
+
+    //reset guess
+    setQuery('');
+    setQueryResults([]);
+
+  })
+
   if(!songData){
   return(
     <div className="flex flex-col flex-1 items-center justify-center bg-background text-foreground font-sans">
@@ -172,6 +244,17 @@ export default function PlayPage() {
         </div>
      )}
 
+     {status === 'won' && (
+       <div className='fixed top-4 right-4 z-50'>
+            <Alert variant="default" className="max-w-md">
+                <AlertCircleIcon />
+                <AlertTitle>You won</AlertTitle>
+                <AlertDescription>Song was {songData.artist}-{songData.title}</AlertDescription>
+            </Alert>
+  
+        </div>
+     )}
+
       <h1 className='title'>Play page</h1>
 
       <div className="flex flex-col gap-2 mt-4 w-full max-w-md">
@@ -197,17 +280,43 @@ export default function PlayPage() {
     
       
       <div className="flex flex-1 items-center gap-2">
-        <input className="input"></input>
+        <div className='relative flex-1'>
+
+          <input className="input"
+            value={query}
+            onChange={(e) => handleQuery(e.target.value)} //take the text written - e.target.value - and pass it to handleQuery at every keystore
+            placeholder='Guess the song'
+          ></input>
+
+          {/*suggestion dropdown*/}
+          {queryResults.length > 0 && (
+            <ul className="absolute top-full left-0 w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-lg overflow-hidden z-10">
+            {queryResults.map((song: QueryResult) => (
+              <li
+                key={song.id}
+                onClick={() => handleSubmission(song)}
+                className="px-4 py-2 cursor-pointer hover:bg-neutral-800 text-white"
+              >
+                {song.title} — {song.artist}
+              </li>
+            ))}
+          </ul>
+          )}
+
+
+        </div>
         <button className = "button" onClick={() => {
-          if(status !== 'lost')
+          if(status !== 'lost' && status !== 'won')
             handleSkip();
           else
               {
                 setSongData(null);
                 getRandomSong();
+                setQuery('');
+                setQueryResults([]);
               }
           }}>
-          {status === 'lost' ? 'Play again' : 'Skip'}
+          {status === 'lost' || status === 'won' ? 'Play again' : 'Skip'}
           </button>
       </div>
       
