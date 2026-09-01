@@ -8,7 +8,7 @@ export async function GET(req: NextRequest){
         return NextResponse.json({results: []});
     }
 
-    const result = await pool.query('select id, title, artist from songs where title ilike $1 or artist ilike $1 limit 8', [`%${query}%`]); //%query% means containing query anywhere in the word
+    const result = await pool.query('select id, title, artist from songs_spotify where title ilike $1 or artist ilike $1 limit 8', [`%${query}%`]); //%query% means containing query anywhere in the word
     
     return NextResponse.json({results: result.rows});
 }

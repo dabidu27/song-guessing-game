@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, {params}: {params: Promise<{clientId
         try{
 
             //get a random song from the db
-            let result = await pool.query('select id, title, artist, year, track_id from songs order by random() limit 1');
+            let result = await pool.query('select id, title, artist, year, track_id from songs_spotify order by random() limit 1');
             if(result.rowCount === 0)
                 throw new Error('Id not found');
 
