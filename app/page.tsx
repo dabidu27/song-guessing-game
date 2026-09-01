@@ -6,7 +6,7 @@ import PlayButton from "../components/ui/PlayButton";
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1 className="title">Andrada Game</h1>
+      <h1 className="title">UnlimitedSongGuessle</h1>
       <PlayButton />
     </div>
   );

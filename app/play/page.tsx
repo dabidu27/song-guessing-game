@@ -173,6 +173,9 @@ export default function PlayPage() {
   }
 
   const handleSubmission = ((song: QueryResult) => {
+    if (status !== 'playing') {
+      return;
+    }
 
     const correctGuess = song.id === songData?.id;
 
@@ -255,7 +258,7 @@ export default function PlayPage() {
         </div>
      )}
 
-      <h1 className='title'>Play page</h1>
+      <h1 className='title'>UnlimitedSongGuessle</h1>
 
       <div className="flex flex-col gap-2 mt-4 w-full max-w-md">
         {Array.from({length: SNIPPET_DURATIONS.length}).map((_, i) => {
