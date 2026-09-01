@@ -212,7 +212,7 @@ export default function PlayPage() {
 
   if(!songData){
   return(
-    <div className="flex flex-col flex-1 items-center justify-center bg-background text-foreground font-sans">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background px-4 text-foreground font-sans">
       <Progress className = "w-full max-w-sm" value = {null}>
         <ProgressLabel>Loading song...</ProgressLabel>
       </Progress>
@@ -221,13 +221,11 @@ export default function PlayPage() {
   }
 
   return (
-
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-
-      <audio ref={audioRef} src={songData.previewLink}/>
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-zinc-50 px-4 py-6 font-sans dark:bg-black sm:px-6">
+      <audio ref={audioRef} src={songData.previewLink} />
 
      {error && (
-        <div className='fixed top-4 right-4 z-50'>
+        <div className="fixed inset-x-4 top-4 z-50 sm:left-auto sm:right-4">
             <Alert variant="destructive" className="max-w-md">
                 <AlertCircleIcon />
                 <AlertTitle>Error</AlertTitle>
@@ -237,7 +235,7 @@ export default function PlayPage() {
      )}
 
      {status === 'lost' && (
-        <div className='fixed top-4 right-4 z-50'>
+        <div className="fixed inset-x-4 top-4 z-50 sm:left-auto sm:right-4">
             <Alert variant="destructive" className="max-w-md">
                 <AlertCircleIcon />
                 <AlertTitle>You lost</AlertTitle>
@@ -248,7 +246,7 @@ export default function PlayPage() {
      )}
 
      {status === 'won' && (
-       <div className='fixed top-4 right-4 z-50'>
+       <div className="fixed inset-x-4 top-4 z-50 sm:left-auto sm:right-4">
             <Alert variant="default" className="max-w-md">
                 <AlertCircleIcon />
                 <AlertTitle>You won</AlertTitle>
@@ -258,15 +256,15 @@ export default function PlayPage() {
         </div>
      )}
 
-      <h1 className='title'>UnlimitedSongGuessle</h1>
+      <h1 className="title text-3xl sm:text-4xl md:text-5xl">UnlimitedSongGuessle</h1>
 
-      <div className="flex flex-col gap-2 mt-4 w-full max-w-md">
+      <div className="mt-4 flex w-full max-w-md flex-col gap-2">
         {Array.from({length: SNIPPET_DURATIONS.length}).map((_, i) => {
           return(<GuessRow key = {i} label={attempts[i]}>
           </GuessRow>)
         })}
 
-        <button className="button" onClick={() => {
+        <button className="button w-full text-sm sm:text-base" onClick={() => {
           if(!songPlaying)
             playSnippet();
           else
@@ -282,25 +280,24 @@ export default function PlayPage() {
       </div>
     
       
-      <div className="flex flex-1 items-center gap-2">
-        <div className='relative flex-1'>
+      <div className="mt-4 flex w-full max-w-md flex-col gap-2 sm:flex-row sm:items-center">
+        <div className='relative w-full sm:flex-1'>
 
-          <input className="input"
+          <input className="input w-full min-w-0"
             value={query}
-            onChange={(e) => handleQuery(e.target.value)} //take the text written - e.target.value - and pass it to handleQuery at every keystore
+            onChange={(e) => handleQuery(e.target.value)}
             placeholder='Guess the song'
           ></input>
 
-          {/*suggestion dropdown*/}
           {queryResults.length > 0 && (
-            <ul className="absolute top-full left-0 w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-lg overflow-hidden z-10">
+            <ul className="absolute top-full left-0 z-10 mt-1 w-full overflow-hidden rounded-lg border border-neutral-700 bg-neutral-900">
             {queryResults.map((song: QueryResult) => (
               <li
                 key={song.id}
                 onClick={() => handleSubmission(song)}
-                className="px-4 py-2 cursor-pointer hover:bg-neutral-800 text-white"
+                className="cursor-pointer px-4 py-2 text-white hover:bg-neutral-800"
               >
-                {song.title} — {song.artist}
+                {song.title} - {song.artist}
               </li>
             ))}
           </ul>
@@ -308,7 +305,7 @@ export default function PlayPage() {
 
 
         </div>
-        <button className = "button" onClick={() => {
+        <button className = "button w-full sm:w-auto" onClick={() => {
           if(status !== 'lost' && status !== 'won')
             handleSkip();
           else

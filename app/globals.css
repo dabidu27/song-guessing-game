@@ -45,8 +45,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-.title{
-  font-size: 3rem;
+.title {
   font-weight: 800;
   background: white;
   background-clip: text;
@@ -54,12 +53,17 @@
   -webkit-text-fill-color: transparent;
 }
 
-.button{
+.button {
   background-color: green;
-  border-radius: 50px;
-  padding: 0.7em 1.7em;
-  font-size: 18px;
+  border-radius: 9999px;
+  padding: 0.7em 1.2em;
+  font-size: 1rem;
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.96;
 }
 
 button:active {
@@ -67,10 +71,10 @@ button:active {
   box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
 }
 
-.guessRow{
-  border-radius: 50px;
+.guessRow {
+  border-radius: 9999px;
   padding: 0 1.5em;
-  font-size: 18px;
+  font-size: 1rem;
   width: 100%;
   max-width: 28rem;
   height: 2.5rem;
@@ -80,7 +84,7 @@ button:active {
   justify-content: center;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 .input {
@@ -89,7 +93,7 @@ button:active {
   border-radius: 10px;
   padding: 10px 15px;
   background: transparent;
-  max-width: 280px;
+  min-width: 0;
 }
 
 .input:active {
