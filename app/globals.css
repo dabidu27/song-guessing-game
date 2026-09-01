@@ -51,6 +51,27 @@
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: block;
+  overflow: visible;
+}
+
+.title-line {
+  display: block;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .title {
+    max-width: 10ch;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    line-height: 0.9;
+  }
+
+  .title-line {
+    white-space: normal;
+  }
 }
 
 .button {
@@ -73,18 +94,20 @@ button:active {
 
 .guessRow {
   border-radius: 9999px;
-  padding: 0 1.5em;
-  font-size: 1rem;
+  padding: 0.5rem 1.5em;
+  font-size: 0.95rem;
   width: 100%;
   max-width: 28rem;
-  height: 2.5rem;
+  min-height: 2.75rem;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.2;
+  white-space: normal;
 }
 
 .input {
