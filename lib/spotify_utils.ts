@@ -51,7 +51,7 @@ export async function getSongsFromPlaylists(){
 
         songsData.forEach((song: any) => {
             if (song && song.name && song.artists) {
-                songs.push({title: song.name, mainArtist: song.artists[0].name})
+                songs.push({trackName: song.name, mainArtist: song.artists[0].name})
             }
         });
         
