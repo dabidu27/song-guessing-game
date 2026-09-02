@@ -21,6 +21,8 @@ export default function GuessRow({
         color = 'green';
     else if (guessStatus === 'Wrong')
         color = 'red';
+    else if (guessStatus === 'CorrectArtist')
+        color = '#81821a';
     else
         color = 'grey';
 

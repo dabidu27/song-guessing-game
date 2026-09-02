@@ -191,6 +191,8 @@ export default function PlayPage() {
       if(empty !== -1)
         if(correctGuess)
           next[empty] = `${song.title} - ${song.artist}GuessStatusCorrect`
+        else if(song.artist === songData?.artist)
+          next[empty] = `${song.title} - ${song.artist}GuessStatusCorrectArtist`
         else
           next[empty] = `${song.title} - ${song.artist}GuessStatusWrong`
 
