@@ -1,4 +1,5 @@
 
+import fs from 'fs'
 
 export async function getSongsFromPlaylists(){
 
@@ -34,6 +35,8 @@ export async function getSongsFromPlaylists(){
         if(playlistsRes.status === 429){
             let retryAfter = playlistsRes.headers.get('retry-after');
             console.error(`Rate limit hit. Retry-after: ${retryAfter}. Aborting`);
+            //save everything so far if we hit rate limit and abort
+            fs.writeFileSync('spotify_backup.json', JSON.stringify(songs, null, 2));
             throw new Error(`Rate limit hit. Retry-after: ${retryAfter}. Aborting`);
         }
 
@@ -55,10 +58,13 @@ export async function getSongsFromPlaylists(){
             }
         });
         
-        //pause for 2 seconds to avoid rate-limiting
-        await delay(2000); 
+        //pause for 3 seconds to avoid rate-limiting
+        await delay(3000); 
     }
 
     console.log(`Successfully extracted ${songs.length} songs!`);
-    return songs;
+    fs.writeFileSync('spotify_backup.json', JSON.stringify(songs, null, 2));
+    console.log('Saved all songs to spotify_backup.json!');
 }
+
+getSongsFromPlaylists();

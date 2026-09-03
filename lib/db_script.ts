@@ -1,8 +1,9 @@
 import {Pool} from 'pg';
 import { parseCsv } from './dataset_utils';
 import { getTrackId } from './deezer_utils';
-import { getSongsFromPlaylists} from './spotify_utils';
 import { songsArray } from './songs_array';
+import fs from 'fs'
+import 'dotenv/config';
 
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
 
@@ -34,8 +35,8 @@ function normalize(text: string): string {
 async function fillDb(){
 
     //const songs: Song[] = parseCsv();
-    //const songs: Song[] = await getSongsFromPlaylists();
-    const songs: Song[] = songsArray;
+    const rawData = fs.readFileSync('./spotify_backup.json', 'utf-8');
+    const songs: Song[] = JSON.parse(rawData);
 
     for(const song of songs){
         try{
@@ -62,8 +63,9 @@ async function fillDb(){
             await new Promise(res => setTimeout(res, 500));
 
         }catch(err: any){
-            const errorMsg = typeof err === 'string' ? err : err.message;
-            console.error(`Skipped song "${song.trackName}" by ${song.mainArtist}:`, errorMsg);
+            console.log(`\n❌ --- ERROR DETAILS FOR "${song.trackName}" ---`);
+            console.error(err);
+            console.log(`-------------------------------------------\n`);
         }
     }
 
