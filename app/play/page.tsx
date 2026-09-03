@@ -13,7 +13,7 @@ import { Progress, ProgressLabel } from '@/components/ui/progress';
 import GuessRow from '@/components/ui/GuessRow';
 import SnippetBar from '@/components/ui/SnippetBar';
 
-const SNIPPET_DURATIONS = [1, 2, 4, 7, 11, 30];
+const SNIPPET_DURATIONS = [0.3, 0.7, 2, 4, 8, 20];
 
 interface SongData {
   id: number;
